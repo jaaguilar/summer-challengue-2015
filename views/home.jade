@@ -1,0 +1,44 @@
+extends layout
+
+block jumbotron
+  h2 This site is part of a challenge to demonstrate Web development knowledge.
+  p
+    | Client-server design. Everything is javascript based. The server 
+    | side have been programming using Node JS, Jade templates and express framework. 
+    | The front-end is basically HTML/CSS3, Twitter bootstrap and jQuery/AJAX. The bootstrap framework was 
+    | used with a responsive style in order to increase the user experience. 
+    | This framework was used to make the Parallax effect as well. 
+    br
+    | I hope you like it!
+  p
+    a.btn.btn-primary.btn-lg.btn-challenge(href='/newgame', onclick="newGame()", role='button')
+      | Play
+block content-1st-row-left
+  h2 Pillars of Creation
+  p
+    | In this background picture
+    | we can see a well known area of M16 Nebula, also called Eagle Nebula. This region is known as 
+    a(title='By Jschulman555 (Own work) [CC BY-SA 4.0 (http://creativecommons.org/licenses/by-sa/4.0)], via Wikimedia Commons', href='https://commons.wikimedia.org/wiki/File%3AMessier_16_(M16)_pillars_and_nebula_in_32_inch_Schulman_telescope.jpg') Pillars of Creation
+    | , note the allegory.
+  #video-pillars-container.embed-responsive.embed-responsive-16by9
+    video.embed-responsive-item(controls='')
+      source(src='./video/pillars-of-creation.mp4', type='video/mp4')
+  p
+    a.btn.btn-challenge(href='https://en.wikipedia.org/wiki/Eagle_Nebula', target="_blank") View details &raquo;
+block content-1st-row-center
+  h2 Challenge
+  p
+    | In the game of Ghost, two players take turns building up an English word
+    | from left to right. Each player adds one letter per turn. The goal is to not
+    | complete the spelling of a word: if you add a letter that completes a word
+    | (of 4+ letters), or if you add a letter that produces a string that cannot be
+    | extended into a word, you lose.
+  p
+    a.btn.btn-challenge(href='./pdf/ghost-game-rules.pdf', target="_blank") View details &raquo;
+block content-1st-row-right
+  h2 Dev Environment
+  p
+    | This project was developed and tested in Ubuntu server and local client using Chrome as main navigator.
+    | The technical documentation of classes was created with JSDoc tool and avalaible in HTML format.
+  p
+    a.btn.btn-challenge(href='/docs') View details &raquo;

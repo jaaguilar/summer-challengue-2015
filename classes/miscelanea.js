@@ -1,0 +1,290 @@
+"use strict"
+/**
+* Returns a boolean with true if obj is a not empty object
+* @param {object} obj primitive object
+*/ 
+function isNotEmpty(obj) {
+	if (typeof(obj) == 'string')
+		return (obj != '')
+	else if (obj)
+    	return Object.keys(obj).length > 0;
+    else
+    	return false;
+}
+
+/**
+* Returns a boolean if word is only letters (not symbols or numbers)
+* @param {string} word A string to check
+*/ 
+function isOnlyLetters(word) {
+	return (/^[a-zA-Z]+$/).test(word);
+}
+
+
+/**
+* Returns a boolean if the length of an string is even
+* @param {string} str String which length is even or not
+*/ 
+function bEvenStr(str) {
+	if (typeof(str) != "string") throw "bEvenStr: str param must be an string.";
+	return ((str.length % 2) == 0);
+}
+
+/**
+* Returns a boolean if the length of an string is odd
+* @param {string} str String which length is odd or not
+*/ 
+function bOddStr(str) {
+	if (typeof(str) != "string") throw "bOddStr: str param must be an string.";
+	return !bEvenStr(str);
+}
+
+/**
+* Return an array with statistical summary of list of string
+* @param {string[]} list An array strings
+*/ 
+function strStats(list) {
+	//summarize odd and even words of the list
+	var stats = list.map(function(item){
+		return [(bEvenStr(item))?1:0,(bOddStr(item))?1:0,item.length,item.length]
+	}).reduce(function(three,actual){
+		three[0] = three[0]+actual[0];
+		three[1] = three[1]+actual[1];		
+		three[2] = Math.min(three[2],actual[2]);
+		three[3] = Math.max(three[3],actual[3]);
+		return three;
+    },[0,0,0,0]);
+
+	//build the json
+	var jres = {};
+	jres['evenCount'] = stats[0];
+	jres['oddCount'] = stats[1];
+	jres['minlen'] = stats[2];
+	jres['maxlen'] = stats[3];
+	jres['difflen'] = stats[3]-stats[2];
+	return jres;			
+}
+
+/**
+* Returns boolean about params comparison.
+* The objetive is to be used by the sort method of an array of JSON with specific information
+* The premise is: "a" is lower or equal than "b" if count of odd words is lower or equal than b.
+* The point is to do a descendant sort of oddCount elements but elements with 0 evenCount has priority
+* @param {JSON} a Tree with statistical information about content data
+* @param {JSON} a.stats Statistical information about content data
+* @param {number} a.stats.evenCount Number of words into a with an even number of characters
+* @param {number} a.stats.oddCount Number of words into a with an even number of characters
+* @param {JSON} b.stats Statistical information about content data
+* @param {number} b.stats.evenCount Number of words into a with an even number of characters
+* @param {number} b.stats.oddCount Number of words into a with an even number of characters
+*/ 
+function oddWinSort(a, b) {
+	if ((a.stats.evenCount == 0)&&(b.stats.evenCount != 0)){
+		return false
+	}else if ((b.stats.evenCount == 0)&&(a.stats.evenCount != 0)){
+		return true
+	}else{
+		return a.stats.oddCount <= b.stats.oddCount
+	}
+}
+
+/**
+* Returns boolean about params comparison.
+* The objetive is to be used by the sort method of an array of JSON with specific information
+* The premise is: "a" is lower or equal than "b" if count of even words is lower or equal than b.
+* The point is to do a descendant sort of evenCount elements but elements with 0 oddCount has priority
+* @param {JSON} a Tree with statistical information about content data
+* @param {JSON} a.stats Statistical information about content data
+* @param {number} a.stats.evenCount Number of words into a with an even number of characters
+* @param {number} a.stats.oddCount Number of words into a with an even number of characters
+* @param {JSON} b.stats Statistical information about content data
+* @param {number} b.stats.evenCount Number of words into a with an even number of characters
+* @param {number} b.stats.oddCount Number of words into a with an odd number of characters
+*/ 
+function evenWinSort(a, b) {
+	if ((a.stats.oddCount == 0)&&(b.stats.oddCount != 0)){
+		return false
+	}else if ((b.stats.oddCount == 0)&&(a.stats.oddCount != 0)){
+		return true
+	}else{
+		return a.stats.evenCount <= b.stats.evenCount
+	}
+}
+
+
+/**
+* Returns random int between [from-to] interval.
+* If one of arguments is float, it rounds this downward to its nearest integer
+* @param {number} from Start of  interval
+* @param {number} to End of interval
+*/ 
+function randomInt(from,to){
+	if (typeof(from) != "number") throw "randomInt: from param must be a number.";	
+	if (typeof(to) != "number") throw "randomInt: to param must be a number.";		
+	if (to < from) throw "randomInt: from must be greater or equal than to";
+	return Math.floor((Math.random() * (to-from+1)) + from);
+}
+
+
+/**
+* Returns an array with related words of input param term. Related word means
+* that term is prefix of this.
+* @param {string[]} words An array with the words of a dictionary
+* @param {string} term A prefix base to search related words
+* @param {boolean} checkLen A flag to check words related with a minimal length criteria
+* @param {number} minlen Minimal length of related words to be taking into account
+*/
+function relatedWords(term,words,checkLen,minlen){
+	if (!words) throw "relatedTerms: words must not be a null value."
+	if (!term) throw "relatedTerms: term must not be a null value."		
+	return words.filter(function(word){
+		if (checkLen)
+			return (word.length>minlen)&&(word.match('^'+term+'.*'));
+		else
+			return word.match('^'+term+'.*');
+	});
+}
+
+/**
+* Returns an array with derivated terms of input param term. Derivated term
+* is equal to term plus a letter and is a prefix of some word of words list.
+* @param {string[]} words An array with the words of a dictionary
+* @param {string} term A prefix base to search derivated terms
+*/
+function relatedTerms(term,words){
+	if (!words) throw "relatedTerms: words must not be a null value."
+	if (!term) throw "relatedTerms: term must not be a null value."		
+	return words.map(function(word){ 
+		var candidateTerm = word.match('^'+term+'.'); 
+		if (candidateTerm) return candidateTerm[0];
+	}) //map get terms not words and filter clean the results
+	.filter(function(item, pos, a) {
+		//drop nulls and duplicates
+		return (item != null)&&(a.indexOf(item) == pos);
+	});
+}
+
+/**
+* Clean a list of words derivated of other words: one word is the prefix
+* or lexeme of the other, so the longest (derivated word) is pruned
+* @param {string[]} words An array with the words of a dictionary
+* @param {number} minlen A minimal length of words to be considered lexeme
+*/
+function pruneWords(words,minlen){
+    return words.filter(function(lexeme,i,a) {
+        var ancestors = a.filter(function(word){
+            if (word.length > minlen){
+                var res = lexeme.match('^'+word+'.+$');
+                if (res) return word;
+            }
+        });
+        if (ancestors.length==0) return lexeme;
+    })
+}
+
+/**
+* Returns a JSON hierarchical document based on prefixes (term) and related words.
+* Branch phase of the whole algorithm.
+* @param {string[]} words An array with the words of a dictionary
+* @param {string} term A prefix base to search related words
+* @param {integer} level Max level of recursion. Level of depth in JSON structure
+* @param {boolean} prune Flag to indicate if related words are pruned
+* @param {integer} minlen Minimum length to prune
+*/
+function treeBranch(words,term,level,prune,minlen){
+	var tree = {};	
+	var subtree = [];
+	//select from dictionary related term matching words
+	var relwords = relatedWords(term,words);
+	//optional pruning		
+	if (prune) relwords = pruneWords(relwords,minlen);
+	//fill the stats
+	var stats = strStats(relwords);
+	//build the default node
+	if (relwords){
+		tree['term'] = term;
+		tree['branched'] = 0; 		
+		tree['absLevel'] = term.length;
+		tree['level'] = level;
+		tree['relwords'] = relwords;
+		tree['stats'] = stats;
+		tree['subtree']=[];
+	}
+	else return tree; 
+	//if not max level or recursion is reached
+	if (level > 0){
+		var terms = relatedTerms(term,words);
+		//basically the terms can be pruned because it could have 
+		//valid words which are prefix of this terms
+		if (prune) terms = pruneWords(terms);
+
+		var subtree = [];
+		var child = [];
+		//child branch loop
+		terms.forEach(function(newterm){
+			child = treeBranch(relwords,newterm,level-1,prune,minlen);
+			if (child.relwords.length > 0){
+				subtree.push(child);
+			}
+		});
+
+		tree['subtree'] = subtree;
+		tree['branched'] = 1; 
+	}
+	return tree;
+}
+
+/**
+* Search a term through tree nodes. Returns JSON with subtree structure 
+* -where node['term'] == term, and node['subtree'] is an array of related term trees.
+* @param {string} term Key of each tree node
+* @param {JSON} tree Data structure which store information about terms and related words of a dictionary.
+* @param {string} tree.term Key of each node of the tree structure
+* @param {JSON[]} tree.subtree Array of sub-elements with equal structure
+* @param {JSON} tree.stats Statistical information about content data
+* @param {number} tree.stats.evenCount Number of words into a with an even number of characters
+* @param {number} tree.stats.oddCount Number of words into a with an odd number of characters
+* @param {boolean} branch Branch a node with branched == 0
+* @param {number} level Number of level to be branched
+* @param {boolean} prune Flag to indicate if related words are pruned
+* @param {integer} minlen Minimum length to prune
+*/
+function termSearch(term,tree,branch,level,prune,minlen){
+	if (!tree) throw "termSearch: tree must not be a null value.";
+	//base case
+	if (tree.term === term) return tree;
+	else{
+		var ret = {};
+		//auto branch
+		if (branch&&(tree.branched === 0)){
+			tree = treeBranch(tree.relwords,tree.term,level,prune,minlen)
+		}
+		tree.subtree.some(function(node){
+			if (!node) throw "termSearch: node must not be a null value.";
+			var sub = termSearch(term,node,branch,level,prune,minlen);
+			if (isNotEmpty(sub)){
+				this.node = sub;
+				return true;
+			}
+		},ret);
+		return ret.node;
+	}	
+}
+
+
+module.exports= {
+	isNotEmpty: isNotEmpty,
+	isOnlyLetters: isOnlyLetters,
+	bEvenStr: bEvenStr,
+	bOddStr: bOddStr,
+	strStats: strStats,
+	oddWinSort: oddWinSort,
+	evenWinSort: evenWinSort,
+	randomInt: randomInt,
+	relatedTerms: relatedTerms,
+	relatedWords: relatedWords,
+	pruneWords: pruneWords,
+	treeBranch: treeBranch,
+	termSearch: termSearch
+}
+
