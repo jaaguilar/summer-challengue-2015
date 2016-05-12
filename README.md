@@ -21,6 +21,8 @@ Configuration:
 
 Directory Structure:
 
+(View on Raw Mode)
+
 .
 ├── classes
 │   ├── GhostGameIA.js
