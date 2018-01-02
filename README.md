@@ -21,9 +21,7 @@ Configuration:
 
 Directory Structure:
 
-(View on Raw Mode)
-
-.
+```
 ├── classes
 │   ├── GhostGameIA.js
 │   └── miscelanea.js
@@ -89,3 +87,4 @@ Directory Structure:
     │   ├── header.jade
     │   └── menu-main.jade
     └── statistics.jade
+```
