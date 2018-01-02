@@ -1,25 +1,30 @@
-Name: Summer Challenge 2015
-Author: Juan Antonio Aguilar
+# Summer Challenge 2015
+> Author: Juan Antonio Aguilar
 
-Description:
+## Description:
 
 This is a Web site application and is part of a challenge to demonstrate Web development knowledge with Node.js.
 Client-server design. Everything is javascript based. The server side have been programmed using Node JS, Jade templates and express framework. The front-end is basically HTML/CSS3, Twitter bootstrap and jQuery/AJAX. The bootstrap framework was used with a responsive style in order to increase the user experience. This framework was used to make the Parallax effect as well. 
 I hope you like it!
 
-Installation:
+## Installation:
 
-	npm install
+```
+npm install
+```
 
-Accessing development environment:
+## Development environment URL:
 
-	http://localhost:8080
+```
+http://localhost:8080
+```
 
-Configuration:
+## Configuration:
+```
+config.js
+```
 
-	config.js
-
-Directory Structure:
+## Tree folder:
 
 ```
 ├── classes
