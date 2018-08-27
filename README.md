@@ -4,7 +4,7 @@
 ## Description:
 
 This is a Web site application and is part of a challenge to demonstrate Web development knowledge with Node.js.
-Client-server design. Everything is javascript based. The server side have been programmed using Node JS, Jade templates and express framework. The front-end is basically HTML/CSS3, Twitter bootstrap and jQuery/AJAX. Responsive approach in order to increase the user experience.
+Client-server design. Everything is javascript based. The server side have been programmed using Node JS, Jade templates and express framework. The front-end is basically HTML/CSS3, Twitter bootstrap and jQuery/AJAX. Responsive approach was used in order to increase the user experience.
 
 I hope you like it!
 
